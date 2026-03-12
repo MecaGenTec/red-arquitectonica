@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../supabaseClient';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -6,20 +7,22 @@ const Login = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simulación de login por ahora (después conectamos Supabase)
-    setTimeout(() => {
-      if (email === 'agente@red.com' && password === '123456') {
-        onLogin({ nombre: 'Agente Demo', email });
-      } else {
-        setError('Correo o contraseña incorrectos');
-      }
-      setLoading(false);
-    }, 1000);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError('Correo o contraseña incorrectos');
+    } else {
+      onLogin(data.user);
+    }
+    setLoading(false);
   };
 
   return (
@@ -77,11 +80,6 @@ const Login = ({ onLogin }) => {
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
-        </div>
-
-        {/* HINT */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-400 text-center">
-          Demo: <span className="font-mono text-gray-600">agente@red.com</span> / <span className="font-mono text-gray-600">123456</span>
         </div>
 
         <div className="mt-6 text-center">
