@@ -4,9 +4,15 @@ import { supabase } from '../supabaseClient';
 const Dashboard = ({ usuario, onLogout }) => {
   const [propiedades, setPropiedades] = useState([]);
   const [vista, setVista] = useState('inicio');
-  const [form, setForm] = useState({ titulo: '', tipo: 'venta', precio: '', ubicacion: '', m2: '', habitaciones: '', banos: '', estado: 'activa' });
+  const [form, setForm] = useState({
+    titulo: '', tipo: 'venta', precio: '', ubicacion: '',
+    habitaciones: '', banos: '', estado: 'activa',
+    descripcion: '', video_url: '', fotos: []
+  });
   const [editandoId, setEditandoId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [subiendoFotos, setSubiendoFotos] = useState(false);
+  const [fotosPreview, setFotosPreview] = useState([]);
 
   useEffect(() => {
     cargarPropiedades();
@@ -19,21 +25,67 @@ const Dashboard = ({ usuario, onLogout }) => {
     setLoading(false);
   };
 
+  const handleFotos = async (e) => {
+    const archivos = Array.from(e.target.files);
+    if (archivos.length + (form.fotos?.length || 0) > 20) {
+      alert('Máximo 20 fotos por propiedad');
+      return;
+    }
+    setSubiendoFotos(true);
+    const urls = [];
+    const previews = [];
+
+    for (const archivo of archivos) {
+      const nombre = `${Date.now()}-${archivo.name}`;
+      const { data, error } = await supabase.storage
+        .from('propiedades')
+        .upload(nombre, archivo);
+
+      if (!error) {
+        const { data: urlData } = supabase.storage
+          .from('propiedades')
+          .getPublicUrl(nombre);
+        urls.push(urlData.publicUrl);
+        previews.push(urlData.publicUrl);
+      }
+    }
+
+    setForm(prev => ({ ...prev, fotos: [...(prev.fotos || []), ...urls] }));
+    setFotosPreview(prev => [...prev, ...previews]);
+    setSubiendoFotos(false);
+  };
+
+  const eliminarFoto = (index) => {
+    setForm(prev => ({ ...prev, fotos: prev.fotos.filter((_, i) => i !== index) }));
+    setFotosPreview(prev => prev.filter((_, i) => i !== index));
+  };
+
   const guardarPropiedad = async () => {
     if (!form.titulo || !form.precio) return alert('Completa título y precio');
+    const datos = { ...form };
+
     if (editandoId) {
-      await supabase.from('propiedades').update(form).eq('id', editandoId);
+      await supabase.from('propiedades').update(datos).eq('id', editandoId);
       setEditandoId(null);
     } else {
-      await supabase.from('propiedades').insert([form]);
+      await supabase.from('propiedades').insert([datos]);
     }
-    setForm({ titulo: '', tipo: 'venta', precio: '', ubicacion: '', m2: '', habitaciones: '', banos: '', estado: 'activa' });
+
+    setForm({ titulo: '', tipo: 'venta', precio: '', ubicacion: '', habitaciones: '', banos: '', estado: 'activa', descripcion: '', video_url: '', fotos: [] });
+    setFotosPreview([]);
     await cargarPropiedades();
     setVista('propiedades');
   };
 
   const editarPropiedad = (p) => {
-    setForm({ titulo: p.titulo, tipo: p.tipo, precio: p.precio, ubicacion: p.ubicacion || '', m2: p.m2 || '', habitaciones: p.habitaciones || '', banos: p.banos || '', estado: p.estado });
+    setForm({
+      titulo: p.titulo, tipo: p.tipo, precio: p.precio,
+      ubicacion: p.ubicacion || '', habitaciones: p.habitaciones || '',
+      banos: p.banos || '', estado: p.estado,
+      descripcion: p.descripcion || '', video_url: p.video_url || '',
+      fotos: p.fotos || []
+    });
+    setFotosPreview(p.fotos || []);
     setEditandoId(p.id);
     setVista('agregar');
   };
@@ -43,6 +95,12 @@ const Dashboard = ({ usuario, onLogout }) => {
       await supabase.from('propiedades').delete().eq('id', id);
       await cargarPropiedades();
     }
+  };
+
+  const resetForm = () => {
+    setForm({ titulo: '', tipo: 'venta', precio: '', ubicacion: '', habitaciones: '', banos: '', estado: 'activa', descripcion: '', video_url: '', fotos: [] });
+    setFotosPreview([]);
+    setEditandoId(null);
   };
 
   return (
@@ -60,7 +118,7 @@ const Dashboard = ({ usuario, onLogout }) => {
             { id: 'propiedades', label: '🏗️ Mis Propiedades' },
             { id: 'agregar', label: '➕ Agregar Propiedad' },
           ].map(item => (
-            <button key={item.id} onClick={() => { setVista(item.id); setEditandoId(null); setForm({ titulo: '', tipo: 'venta', precio: '', ubicacion: '', m2: '', habitaciones: '', banos: '', estado: 'activa' }); }}
+            <button key={item.id} onClick={() => { setVista(item.id); resetForm(); }}
               className={`w-full text-left px-4 py-3 rounded-lg transition ${vista === item.id ? 'bg-red-700 text-white' : 'text-gray-300 hover:bg-gray-700'}`}>
               {item.label}
             </button>
@@ -73,7 +131,7 @@ const Dashboard = ({ usuario, onLogout }) => {
       </aside>
 
       {/* CONTENIDO */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 overflow-y-auto">
 
         {/* INICIO */}
         {vista === 'inicio' && (
@@ -97,7 +155,10 @@ const Dashboard = ({ usuario, onLogout }) => {
               <h3 className="font-bold text-gray-700 mb-4">Propiedades Recientes</h3>
               {loading ? <p className="text-gray-400">Cargando...</p> : propiedades.slice(0, 5).map(p => (
                 <div key={p.id} className="flex justify-between items-center py-3 border-b last:border-0">
-                  <span className="text-gray-600">{p.titulo}</span>
+                  <div className="flex items-center gap-3">
+                    {p.fotos?.[0] && <img src={p.fotos[0]} alt={p.titulo} className="w-10 h-10 rounded-lg object-cover" />}
+                    <span className="text-gray-600">{p.titulo}</span>
+                  </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${p.estado === 'activa' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{p.estado}</span>
                 </div>
               ))}
@@ -111,36 +172,39 @@ const Dashboard = ({ usuario, onLogout }) => {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-800">Mis Propiedades</h2>
-              <button onClick={() => setVista('agregar')} className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition">+ Agregar</button>
+              <button onClick={() => { resetForm(); setVista('agregar'); }} className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition">+ Agregar</button>
             </div>
             {loading ? <p className="text-gray-400">Cargando...</p> : (
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-gray-50 text-gray-500 text-sm">
-                    <tr>
-                      <th className="text-left px-6 py-4">Propiedad</th>
-                      <th className="text-left px-6 py-4">Tipo</th>
-                      <th className="text-left px-6 py-4">Precio</th>
-                      <th className="text-left px-6 py-4">Estado</th>
-                      <th className="text-left px-6 py-4">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {propiedades.map(p => (
-                      <tr key={p.id} className="border-t hover:bg-gray-50">
-                        <td className="px-6 py-4 font-medium text-gray-800">{p.titulo}</td>
-                        <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${p.tipo === 'venta' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>{p.tipo}</span></td>
-                        <td className="px-6 py-4 text-gray-600">{p.precio}</td>
-                        <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${p.estado === 'activa' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{p.estado}</span></td>
-                        <td className="px-6 py-4 flex gap-2">
-                          <button onClick={() => editarPropiedad(p)} className="text-blue-500 hover:text-blue-700 text-sm">Editar</button>
-                          <button onClick={() => eliminarPropiedad(p.id)} className="text-red-500 hover:text-red-700 text-sm">Eliminar</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {propiedades.length === 0 && <p className="text-center text-gray-400 py-8">No hay propiedades. ¡Agrega la primera!</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {propiedades.map(p => (
+                  <div key={p.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    {/* FOTO */}
+                    <div className="h-48 bg-gray-200 relative">
+                      {p.fotos?.[0]
+                        ? <img src={p.fotos[0]} alt={p.titulo} className="w-full h-full object-cover" />
+                        : <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">🏠</div>
+                      }
+                      <span className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-bold text-white ${p.tipo === 'venta' ? 'bg-red-700' : 'bg-green-700'}`}>{p.tipo}</span>
+                      {p.fotos?.length > 1 && <span className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">📷 {p.fotos.length}</span>}
+                    </div>
+                    {/* INFO */}
+                    <div className="p-4">
+                      <h3 className="font-bold text-gray-800 mb-1">{p.titulo}</h3>
+                      <p className="text-gray-400 text-sm mb-2">📍 {p.ubicacion}</p>
+                      <p className="text-red-700 font-bold text-lg mb-3">{p.precio}</p>
+                      <div className="flex gap-3 text-gray-400 text-sm mb-4">
+                        {p.habitaciones > 0 && <span>🛏 {p.habitaciones}</span>}
+                        {p.banos > 0 && <span>🚿 {p.banos}</span>}
+                        <span className={`ml-auto px-2 py-0.5 rounded-full text-xs font-semibold ${p.estado === 'activa' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{p.estado}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => editarPropiedad(p)} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium transition">Editar</button>
+                        <button onClick={() => eliminarPropiedad(p.id)} className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-lg text-sm font-medium transition">Eliminar</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {propiedades.length === 0 && <p className="text-gray-400 col-span-3 text-center py-8">No hay propiedades. ¡Agrega la primera!</p>}
               </div>
             )}
           </div>
@@ -150,37 +214,90 @@ const Dashboard = ({ usuario, onLogout }) => {
         {vista === 'agregar' && (
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-6">{editandoId ? 'Editar Propiedad' : 'Agregar Propiedad'}</h2>
-            <div className="bg-white rounded-xl p-8 shadow-sm max-w-lg space-y-5">
-              {[
-                { label: 'Título', key: 'titulo', placeholder: 'Casa Moderna en...' },
-                { label: 'Precio', key: 'precio', placeholder: '$3,500,000' },
-                { label: 'Ubicación', key: 'ubicacion', placeholder: 'Colonia, Ciudad' },
-                { label: 'M²', key: 'm2', placeholder: '120' },
-                { label: 'Habitaciones', key: 'habitaciones', placeholder: '3' },
-                { label: 'Baños', key: 'banos', placeholder: '2' },
-              ].map(f => (
-                <div key={f.key}>
-                  <label className="block text-gray-600 font-medium mb-2">{f.label}</label>
-                  <input value={form[f.key]} onChange={e => setForm({...form, [f.key]: e.target.value})}
-                    className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700"
-                    placeholder={f.placeholder} />
+            <div className="bg-white rounded-xl p-8 shadow-sm max-w-2xl space-y-5">
+
+              {/* CAMPOS BÁSICOS */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {[
+                  { label: 'Título *', key: 'titulo', placeholder: 'Casa Moderna en...' },
+                  { label: 'Precio *', key: 'precio', placeholder: '$3,500,000' },
+                  { label: 'Ubicación', key: 'ubicacion', placeholder: 'Colonia, Ciudad' },
+                  { label: 'Habitaciones', key: 'habitaciones', placeholder: '3' },
+                  { label: 'Baños', key: 'banos', placeholder: '2' },
+                  { label: 'Video URL (YouTube/Vimeo)', key: 'video_url', placeholder: 'https://youtube.com/...' },
+                ].map(f => (
+                  <div key={f.key}>
+                    <label className="block text-gray-600 font-medium mb-2">{f.label}</label>
+                    <input value={form[f.key]} onChange={e => setForm({ ...form, [f.key]: e.target.value })}
+                      className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700"
+                      placeholder={f.placeholder} />
+                  </div>
+                ))}
+              </div>
+
+              {/* TIPO Y ESTADO */}
+              <div className="grid grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-gray-600 font-medium mb-2">Tipo</label>
+                  <select value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}
+                    className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700">
+                    <option value="venta">Venta</option>
+                    <option value="renta">Renta</option>
+                  </select>
                 </div>
-              ))}
-              <div>
-                <label className="block text-gray-600 font-medium mb-2">Tipo</label>
-                <select value={form.tipo} onChange={e => setForm({...form, tipo: e.target.value})} className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700">
-                  <option value="venta">Venta</option>
-                  <option value="renta">Renta</option>
-                </select>
+                <div>
+                  <label className="block text-gray-600 font-medium mb-2">Estado</label>
+                  <select value={form.estado} onChange={e => setForm({ ...form, estado: e.target.value })}
+                    className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700">
+                    <option value="activa">Activa</option>
+                    <option value="pendiente">Pendiente</option>
+                  </select>
+                </div>
               </div>
+
+              {/* DESCRIPCIÓN */}
               <div>
-                <label className="block text-gray-600 font-medium mb-2">Estado</label>
-                <select value={form.estado} onChange={e => setForm({...form, estado: e.target.value})} className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700">
-                  <option value="activa">Activa</option>
-                  <option value="pendiente">Pendiente</option>
-                </select>
+                <label className="block text-gray-600 font-medium mb-2">Descripción</label>
+                <textarea value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })}
+                  rows={4} placeholder="Describe la propiedad en detalle..."
+                  className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:border-red-700 resize-none" />
               </div>
-              <button onClick={guardarPropiedad} className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-semibold transition">
+
+              {/* FOTOS */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-2">
+                  Fotos ({fotosPreview.length}/20)
+                </label>
+                <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer transition
+                  ${subiendoFotos ? 'border-gray-300 bg-gray-50' : 'border-red-300 hover:border-red-500 hover:bg-red-50'}`}>
+                  <span className="text-3xl mb-2">📷</span>
+                  <span className="text-gray-500 text-sm">
+                    {subiendoFotos ? 'Subiendo fotos...' : 'Clic para agregar fotos (máx. 20)'}
+                  </span>
+                  <input type="file" multiple accept="image/*" onChange={handleFotos}
+                    className="hidden" disabled={subiendoFotos || fotosPreview.length >= 20} />
+                </label>
+
+                {/* PREVIEW FOTOS */}
+                {fotosPreview.length > 0 && (
+                  <div className="grid grid-cols-4 gap-3 mt-4">
+                    {fotosPreview.map((url, i) => (
+                      <div key={i} className="relative group">
+                        <img src={url} alt={`foto-${i}`} className="w-full h-24 object-cover rounded-lg" />
+                        <button onClick={() => eliminarFoto(i)}
+                          className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-xs opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                          ✕
+                        </button>
+                        {i === 0 && <span className="absolute bottom-1 left-1 bg-black/60 text-white text-xs px-1 rounded">Principal</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button onClick={guardarPropiedad}
+                disabled={subiendoFotos}
+                className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50">
                 {editandoId ? 'Guardar Cambios' : 'Agregar Propiedad'}
               </button>
             </div>
