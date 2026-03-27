@@ -37,7 +37,7 @@ const Dashboard = ({ usuario, onLogout }) => {
 
     for (const archivo of archivos) {
       const nombre = `${Date.now()}-${archivo.name}`;
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('propiedades')
         .upload(nombre, archivo);
 
