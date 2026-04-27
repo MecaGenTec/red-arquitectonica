@@ -369,14 +369,7 @@ const Dashboard = ({ usuario, onLogout }) => {
                   <label className={labelClass}>Ciudad / Municipio</label>
                   <input value={form.ubicacion} onChange={e => handleChange('ubicacion', e.target.value)} className={inputClass} placeholder="Colonia, Ciudad" />
                 </div>
-                <div>
-                  <label className={labelClass}>Latitud</label>
-                  <input value={form.latitud} onChange={e => handleChange('latitud', e.target.value)} className={inputClass} placeholder="19.4326" type="number" step="any" />
-                </div>
-                <div>
-                  <label className={labelClass}>Longitud</label>
-                  <input value={form.longitud} onChange={e => handleChange('longitud', e.target.value)} className={inputClass} placeholder="-99.1332" type="number" step="any" />
-                </div>
+
               </div>
 
               {/* CARACTERÍSTICAS */}
