@@ -39,39 +39,80 @@ const Footer = () => {
               <span className="text-xl text-gray-300">Arquitectónica</span>
             </div>
             <p className="text-gray-400 leading-relaxed mb-6">
-              Somos una red de empresas comprometidas con la construcción sostenible,
-              el diseño innovador y el bienestar de nuestra comunidad.
+              Somos una red de profesionales especialistas en arquitectura, 
+              comprometidos con brindar soluciones integrales en inmobiliaria, 
+              proyecto, construcción y mantenimiento de inmuebles.
             </p>
             <p className="text-green-400 font-semibold mb-10">
               Inmobiliaria · Proyecto · Construcción
             </p>
 
+            {/* CONTACTO */}
             <h4 className="text-lg font-bold mb-4 text-white">Información de Contacto</h4>
-            <ul className="space-y-3 text-gray-400">
+            <ul className="space-y-3 text-gray-400 mb-8">
               <li className="flex items-center gap-2">
                 <span>📧</span>
-                <span>contacto@redarquitectonica.com</span>
+                <a href="mailto:redarquitecto@gmail.com" className="hover:text-red-400 transition">
+                  redarquitecto@gmail.com
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <span>📞</span>
-                <span>+52 (55) 0000-0000</span>
+                <span>Ofic. Tlalnepantla Centro: 55-4161-9454</span>
               </li>
               <li className="flex items-center gap-2">
-                <span>📍</span>
-                <span>Ciudad de México, México</span>
+                <span>📞</span>
+                <span>Suc. Viveros de la Loma: 55-6067-9951</span>
               </li>
             </ul>
 
-            <div className="mt-10">
-              <h4 className="text-lg font-bold mb-4 text-white">Navegación</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#inicio" className="hover:text-red-400 transition">Inicio</a></li>
-                <li><a href="#nosotros" className="hover:text-red-400 transition">Nosotros</a></li>
-                <li><a href="#servicios" className="hover:text-red-400 transition">Servicios</a></li>
-                <li><a href="#propiedades" className="hover:text-red-400 transition">Propiedades</a></li>
-                <li><a href="/login" className="hover:text-green-400 transition">Portal Agentes</a></li>
-              </ul>
-            </div>
+            {/* DIRECCIONES */}
+            <h4 className="text-lg font-bold mb-4 text-white">Sucursales</h4>
+            <ul className="space-y-4 text-gray-400 mb-8">
+              <li className="flex items-start gap-2">
+                <span className="mt-1">📍</span>
+                <div>
+                  <p className="font-semibold text-gray-300">Suc. Tlalnepantla</p>
+                  <p className="text-sm">Calle Vallarta #40, Col. Centro</p>
+                  <p className="text-sm">Tlalnepantla de Baz, Edo. de Méx. C.P. 54000</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">📍</span>
+                <div>
+                  <p className="font-semibold text-gray-300">Suc. Satélite</p>
+                  <p className="text-sm">Viveros de Asís #150, Col. Viveros de la Loma</p>
+                  <p className="text-sm">Tlalnepantla de Baz, Edo. de Méx. C.P. 54080</p>
+                </div>
+              </li>
+            </ul>
+
+            {/* REDES SOCIALES */}
+            <h4 className="text-lg font-bold mb-4 text-white">Redes Sociales</h4>
+            <ul className="space-y-3 text-gray-400 mb-8">
+              <li className="flex items-center gap-2">
+                <span>📘</span>
+                <a href="https://www.facebook.com/RedarquitectonicalPC" target="_blank" rel="noreferrer" className="hover:text-red-400 transition">
+                  @RedarquitectonicalPC
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>🌐</span>
+                <a href="https://www.vivanuncios.com.mx" target="_blank" rel="noreferrer" className="hover:text-red-400 transition">
+                  vivanuncios.com.mx — Usuario: Red Arquitectónica
+                </a>
+              </li>
+            </ul>
+
+            {/* NAVEGACIÓN */}
+            <h4 className="text-lg font-bold mb-4 text-white">Navegación</h4>
+            <ul className="space-y-2 text-gray-400">
+              <li><a href="#inicio" className="hover:text-red-400 transition">Inicio</a></li>
+              <li><a href="#nosotros" className="hover:text-red-400 transition">Nosotros</a></li>
+              <li><a href="#servicios" className="hover:text-red-400 transition">Servicios</a></li>
+              <li><a href="#propiedades" className="hover:text-red-400 transition">Propiedades</a></li>
+              <li><a href="/login" className="hover:text-green-400 transition">Portal Agentes</a></li>
+            </ul>
           </div>
 
           {/* COLUMNA DERECHA - FORMULARIO */}
@@ -83,10 +124,7 @@ const Footer = () => {
               <div className="bg-green-600 text-white p-6 rounded-xl text-center">
                 <p className="text-xl font-bold mb-2">¡Mensaje enviado! ✅</p>
                 <p className="text-green-100">Nos pondremos en contacto contigo pronto.</p>
-                <button
-                  onClick={() => setExito(false)}
-                  className="mt-4 text-sm underline text-green-200 hover:text-white"
-                >
+                <button onClick={() => setExito(false)} className="mt-4 text-sm underline text-green-200 hover:text-white">
                   Enviar otro mensaje
                 </button>
               </div>
@@ -94,61 +132,35 @@ const Footer = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-1">Nombre *</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={form.nombre}
-                    onChange={handleChange}
-                    required
+                  <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required
                     placeholder="Tu nombre completo"
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
-                  />
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition" />
                 </div>
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-1">Correo electrónico *</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
+                  <input type="email" name="email" value={form.email} onChange={handleChange} required
                     placeholder="tu@correo.com"
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
-                  />
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition" />
                 </div>
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-1">Teléfono</label>
-                  <input
-                    type="tel"
-                    name="telefono"
-                    value={form.telefono}
-                    onChange={handleChange}
+                  <input type="tel" name="telefono" value={form.telefono} onChange={handleChange}
                     placeholder="+52 (55) 0000-0000"
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition"
-                  />
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition" />
                 </div>
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-1">Mensaje *</label>
-                  <textarea
-                    name="mensaje"
-                    value={form.mensaje}
-                    onChange={handleChange}
-                    required
-                    rows={4}
+                  <textarea name="mensaje" value={form.mensaje} onChange={handleChange} required rows={4}
                     placeholder="¿En qué podemos ayudarte?"
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition resize-none"
-                  />
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition resize-none" />
                 </div>
 
                 {error && (
                   <p className="text-red-400 text-sm bg-red-900/30 px-4 py-2 rounded-lg">{error}</p>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-red-700 hover:bg-red-600 text-white py-3 rounded-lg font-semibold text-lg transition disabled:opacity-50"
-                >
+                <button type="submit" disabled={loading}
+                  className="w-full bg-red-700 hover:bg-red-600 text-white py-3 rounded-lg font-semibold text-lg transition disabled:opacity-50">
                   {loading ? 'Enviando...' : 'Enviar Mensaje'}
                 </button>
               </form>
@@ -158,7 +170,7 @@ const Footer = () => {
 
         {/* COPYRIGHT */}
         <div className="border-t border-gray-800 mt-16 pt-8 text-center text-gray-500 text-sm">
-          © 2024 RED Arquitectónica. Todos los derechos reservados.
+          © 2025 RED Arquitectónica. Todos los derechos reservados. | Marca registrada ante el IMPI desde enero de 2019.
         </div>
       </div>
     </footer>

@@ -3,38 +3,62 @@ import React from 'react';
 const servicios = [
   {
     icono: '🏠',
-    titulo: 'Inmobiliaria',
-    descripcion: 'Conectamos compradores y vendedores con las mejores propiedades del mercado. Venta y renta de inmuebles residenciales y comerciales.',
+    titulo: 'Venta y Renta de Inmuebles',
+    descripcion: 'Comercializamos propiedades residenciales y comerciales. Te ayudamos a encontrar el inmueble ideal o a vender/rentar el tuyo al mejor precio.',
     color: 'border-red-700'
   },
   {
-    icono: '📐',
-    titulo: 'Proyecto',
-    descripcion: 'Diseño arquitectónico innovador y sustentable. Desarrollamos proyectos que integran tecnología verde y bienestar comunitario.',
+    icono: '📋',
+    titulo: 'Avalúos y Opiniones de Valor',
+    descripcion: 'Determinamos el valor real de tu propiedad en el mercado actual con criterios profesionales y certificados.',
     color: 'border-green-700'
   },
   {
-    icono: '🏗️',
-    titulo: 'Construcción',
-    descripcion: 'Construcción de alta calidad con materiales sostenibles. Edificamos el futuro con responsabilidad ambiental y social.',
+    icono: '⚖️',
+    titulo: 'Protección Jurídica para Rentas',
+    descripcion: 'Resguardamos tus intereses legales en contratos de arrendamiento, garantizando seguridad jurídica para arrendadores y arrendatarios.',
     color: 'border-red-700'
   },
   {
-    icono: '♻️',
-    titulo: 'Tecnología Verde',
-    descripcion: 'Integramos soluciones energéticas limpias, paneles solares, sistemas de agua y materiales ecológicos en cada proyecto.',
+    icono: '🏢',
+    titulo: 'Administración de Inmuebles',
+    descripcion: 'Gestionamos tu propiedad de forma integral: cobranza, mantenimiento, contratos y atención a inquilinos.',
     color: 'border-green-700'
-  },
-  {
-    icono: '🤝',
-    titulo: 'Red de Aliados',
-    descripcion: 'Somos una comunidad de empresas comprometidas con el desarrollo sostenible. Juntos creamos más valor para nuestros clientes.',
-    color: 'border-red-700'
   },
   {
     icono: '📊',
-    titulo: 'Consultoría',
-    descripcion: 'Asesoría integral en inversiones inmobiliarias, permisos de construcción y desarrollo de proyectos sustentables.',
+    titulo: 'Asesoría Legal y Fiscal',
+    descripcion: 'Orientación especializada en aspectos legales y fiscales relacionados con la compra, venta y renta de inmuebles.',
+    color: 'border-red-700'
+  },
+  {
+    icono: '🏦',
+    titulo: 'Gestión de Créditos',
+    descripcion: 'Asesoría y gestoría de créditos bancarios, Autofinanciamiento, INFONAVIT, FOVISSSTE y PEMEX para hacer realidad tu patrimonio.',
+    color: 'border-green-700'
+  },
+  {
+    icono: '🔍',
+    titulo: 'Búsqueda de Inmuebles',
+    descripcion: 'Encontramos la propiedad que se adapta a tus necesidades y presupuesto. Ahorra tiempo con nuestra búsqueda personalizada.',
+    color: 'border-red-700'
+  },
+  {
+    icono: '🏗️',
+    titulo: 'Proyecto, Construcción y Mantenimiento',
+    descripcion: 'Diseño arquitectónico, construcción y mantenimiento de inmuebles residenciales y comerciales con altos estándares de calidad.',
+    color: 'border-green-700'
+  },
+  {
+    icono: '🎓',
+    titulo: 'Certificación Federal de Asesor',
+    descripcion: 'Nuestros asesores están certificados ante CONOCER (Certificación Inmobiliaria Federal EC01 10.01) en la comercialización de inmuebles.',
+    color: 'border-red-700'
+  },
+  {
+    icono: '💰',
+    titulo: 'Inversiones en Remates Bancarios',
+    descripcion: 'Te asesoramos en la adquisición de propiedades en remate bancario, maximizando tu inversión con el menor riesgo posible.',
     color: 'border-green-700'
   },
 ];

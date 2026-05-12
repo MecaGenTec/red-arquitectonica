@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
         
         {/* LOGO */}
-        <div className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-red-800">RED</span>
-          <span className="text-lg font-semibold text-gray-700">Arquitectónica</span>
+        <div className="flex items-center">
+          <img src={logo} alt="RED Arquitectónica" className="h-16 w-auto object-contain" />
         </div>
 
         {/* MENU DESKTOP */}

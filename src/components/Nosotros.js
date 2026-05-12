@@ -18,28 +18,20 @@ const Nosotros = () => {
             <h3 className="text-3xl font-bold text-gray-800 mb-6">
               Construimos comunidad, <span className="text-green-700">construimos futuro</span>
             </h3>
-            <p className="text-gray-500 leading-relaxed mb-6">
-              RED Arquitectónica es una red de empresas aliadas comprometidas con ofrecer 
-              soluciones integrales en inmobiliaria, diseño y construcción sostenible. 
-              Somos el puente entre los mejores profesionales del sector y nuestros clientes.
-            </p>
+            <p className="text-gray-500 leading-relaxed mb-4">
+  RED Arquitectónica es una empresa mexicana integradora de profesionales especialistas en el área de arquitectura, para brindar a nuestros clientes soluciones integrales que engloban los servicios de comercialización inmobiliaria, de proyecto, construcción y mantenimiento de inmuebles. Somos el puente entre los mejores profesionales del sector y nuestros clientes.
+</p>
+<p className="text-gray-500 leading-relaxed mb-4">
+  Red Arquitectónica es una marca registrada ante el IMPI (Instituto Mexicano de Propiedad Industrial) desde enero de 2019.
+</p>
+<p className="text-gray-500 leading-relaxed mb-8">
+  Nos distingue un compromiso constante con la actualización y el profesionalismo, por lo que nuestros asesores inmobiliarios están certificados ante CONOCER (Certificación Inmobiliaria Federal) en la comercialización de inmuebles.
+</p>
             <p className="text-gray-500 leading-relaxed mb-8">
               Nuestra filosofía se basa en la tecnología verde, el respeto al medio ambiente 
               y el desarrollo de comunidades que perduran en el tiempo.
             </p>
             <div className="flex gap-8">
-              <div className="text-center">
-                <p className="text-4xl font-bold text-red-700">10+</p>
-                <p className="text-gray-500 text-sm">Empresas Aliadas</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-red-700">500+</p>
-                <p className="text-gray-500 text-sm">Proyectos Realizados</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-red-700">15+</p>
-                <p className="text-gray-500 text-sm">Años de Experiencia</p>
-              </div>
             </div>
           </div>
           <div 
